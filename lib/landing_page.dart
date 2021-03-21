@@ -12,7 +12,7 @@ class _LandingPageState extends State<LandingPage> {
   User _user;
 
   Future<void> _checkUser() async {
-    _user = await FirebaseAuth.instance.currentUser;
+    _user = FirebaseAuth.instance.currentUser;
   }
 
   void _updateUser(User user) {
