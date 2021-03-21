@@ -4,6 +4,17 @@ import 'package:flutter/material.dart';
 import 'common_widgets/social_login_button.dart';
 
 class SignInPage extends StatelessWidget {
+  final Function(User) onSingIn;
+
+  const SignInPage({Key key, @required this.onSingIn}) : super(key: key);
+
+  void _misafirGirisi() async {
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInAnonymously();
+    onSingIn(userCredential.user);
+    print("Oturum açan user id : " + userCredential.user.uid.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,11 +71,5 @@ class SignInPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _misafirGirisi() async {
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInAnonymously();
-    print("Oturum açan user id : " + userCredential.user.uid.toString());
   }
 }
