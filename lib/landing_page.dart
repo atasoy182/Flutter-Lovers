@@ -1,21 +1,26 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/home_page.dart';
+import 'package:flutter_lovers/model/app_user_model.dart';
+import 'package:flutter_lovers/services/auth_base.dart';
 import 'package:flutter_lovers/sign_in_page.dart';
 
 class LandingPage extends StatefulWidget {
+  final AuthBase authService;
+
+  const LandingPage({Key key, @required this.authService}) : super(key: key);
+
   @override
   _LandingPageState createState() => _LandingPageState();
 }
 
 class _LandingPageState extends State<LandingPage> {
-  User _user;
+  AppUser _user;
 
   Future<void> _checkUser() async {
-    _user = FirebaseAuth.instance.currentUser;
+    _user = await widget.authService.getCurrentUser();
   }
 
-  void _updateUser(User user) {
+  void _updateUser(AppUser user) {
     setState(() {
       _user = user;
     });
@@ -23,7 +28,6 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _checkUser();
   }
@@ -32,12 +36,14 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
     if (_user == null) {
       return SignInPage(
+        authService: widget.authService,
         onSingIn: (User) => _updateUser(User),
       );
     } else {
       return HomePage(
-        user: _user,
+        authService: widget.authService,
         onSignOut: () => _updateUser(null),
+        user: _user,
       );
     }
   }

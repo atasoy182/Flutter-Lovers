@@ -1,11 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
-  final User user;
-  final Function onSignOut;
+import 'model/app_user_model.dart';
+import 'services/auth_base.dart';
 
-  const HomePage({Key key, this.user, @required this.onSignOut})
+class HomePage extends StatelessWidget {
+  final Function onSignOut;
+  final AuthBase authService;
+  final AppUser user;
+
+  const HomePage(
+      {Key key,
+      @required this.onSignOut,
+      @required this.authService,
+      @required this.user})
       : super(key: key);
 
   @override
@@ -23,13 +30,14 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Text("Hoş Geldiniz ${user.uid}"),
+        child: Text("Hoş Geldiniz ${user.userID}"),
       ),
     );
   }
 
   Future<void> _cikisYap() async {
-    await FirebaseAuth.instance.signOut();
+    bool result = await authService.signOut();
     onSignOut();
+    return result;
   }
 }
