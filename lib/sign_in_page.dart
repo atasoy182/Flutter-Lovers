@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
-import 'package:flutter_lovers/services/firebase_auth_service.dart';
+import 'package:flutter_lovers/viewmodel/user_model.dart';
+import 'package:provider/provider.dart';
 
 import 'common_widgets/social_login_button.dart';
-import 'locator.dart';
-import 'services/auth_base.dart';
 
 class SignInPage extends StatelessWidget {
-  final Function(AppUser) onSingIn;
-  AuthBase authService = locator<FirebaseAuthService>();
-
-  SignInPage({Key key, @required this.onSingIn}) : super(key: key);
-
-  void _misafirGirisi() async {
-    AppUser _user = await authService.signInAnonymously();
-    onSingIn(_user);
+  void _misafirGirisi(BuildContext context) async {
+    final _userModel = Provider.of<UserModel>(context, listen: false);
+    AppUser _user = await _userModel.signInAnonymously();
     print("Oturum açan user id : " + _user.userID.toString());
   }
 
@@ -66,7 +60,7 @@ class SignInPage extends StatelessWidget {
             ),
             SocialLoginButton(
               buttonText: "Misafir Girişi",
-              onPressed: _misafirGirisi,
+              onPressed: () => _misafirGirisi(context),
               buttonColor: Colors.teal,
               buttonIcon: Icon(Icons.supervised_user_circle),
             ),

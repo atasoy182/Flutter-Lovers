@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lovers/services/firebase_auth_service.dart';
+import 'package:flutter_lovers/viewmodel/user_model.dart';
+import 'package:provider/provider.dart';
 
-import 'locator.dart';
 import 'model/app_user_model.dart';
-import 'services/auth_base.dart';
 
 class HomePage extends StatelessWidget {
-  final Function onSignOut;
-  AuthBase authService = locator<FirebaseAuthService>();
   final AppUser user;
 
-  HomePage({Key key, @required this.onSignOut, @required this.user})
-      : super(key: key);
+  HomePage({Key key, @required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +16,7 @@ class HomePage extends StatelessWidget {
         title: Text("Ana sayfa"),
         actions: [
           FlatButton(
-              onPressed: _cikisYap,
+              onPressed: () => _cikisYap(context),
               child: Text(
                 "Çıkış Yap",
                 style: TextStyle(color: Colors.white),
@@ -33,9 +29,9 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Future<void> _cikisYap() async {
-    bool result = await authService.signOut();
-    onSignOut();
+  Future<void> _cikisYap(BuildContext context) async {
+    final _userModel = Provider.of<UserModel>(context, listen: false);
+    bool result = await _userModel.signOut();
     return result;
   }
 }

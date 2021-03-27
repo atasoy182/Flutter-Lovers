@@ -18,6 +18,12 @@ class UserModel with ChangeNotifier implements AuthBase {
     notifyListeners();
   }
 
+  AppUser get user => _user;
+
+  UserModel() {
+    getCurrentUser();
+  }
+
   @override
   Future<AppUser> getCurrentUser() async {
     try {
@@ -50,7 +56,9 @@ class UserModel with ChangeNotifier implements AuthBase {
   Future<bool> signOut() async {
     try {
       state = ViewState.Busy;
-      return await _userRepository.signOut();
+      bool result = await _userRepository.signOut();
+      _user = null;
+      return result;
     } catch (e) {
       debugPrint("View modeldeki signOut hatası ${e.toString()}");
       return false;
