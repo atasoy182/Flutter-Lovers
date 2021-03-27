@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lovers/services/firebase_auth_service.dart';
 
+import 'locator.dart';
 import 'model/app_user_model.dart';
 import 'services/auth_base.dart';
 
 class HomePage extends StatelessWidget {
   final Function onSignOut;
-  final AuthBase authService;
+  AuthBase authService = locator<FirebaseAuthService>();
   final AppUser user;
 
-  const HomePage(
-      {Key key,
-      @required this.onSignOut,
-      @required this.authService,
-      @required this.user})
+  HomePage({Key key, @required this.onSignOut, @required this.user})
       : super(key: key);
 
   @override
