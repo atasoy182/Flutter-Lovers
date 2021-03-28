@@ -25,4 +25,10 @@ class FakeAuthService implements AuthBase {
     // TODO: implement signInWithGmail
     throw UnimplementedError();
   }
+
+  @override
+  Future<AppUser> signInWithFacebook() {
+    // TODO: implement signInWithFacebook
+    throw UnimplementedError();
+  }
 }

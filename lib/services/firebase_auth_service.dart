@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -33,6 +34,10 @@ class FirebaseAuthService implements AuthBase {
     try {
       final _googleSignIn = GoogleSignIn();
       await _googleSignIn.signOut();
+
+      final _facebookLogin = FacebookLogin();
+      await _facebookLogin.logOut();
+
       await _firebaseAuth.signOut();
       return true;
     } catch (e) {
@@ -73,5 +78,32 @@ class FirebaseAuthService implements AuthBase {
     } catch (e) {
       print("Gmail oturum açma hatası " + e.toString());
     }
+  }
+
+  @override
+  Future<AppUser> signInWithFacebook() async {
+    final _facebookLogin = FacebookLogin();
+    FacebookLoginResult _faceResult = await _facebookLogin
+        .logInWithReadPermissions(['public_profile', 'email']);
+
+    switch (_faceResult.status) {
+      case FacebookLoginStatus.loggedIn:
+        if (_faceResult.accessToken != null) {
+          UserCredential firebaseResult = await _firebaseAuth
+              .signInWithCredential(FacebookAuthProvider.credential(
+                  _faceResult.accessToken.token));
+          User user = firebaseResult.user;
+          return _userFromFirebase(user);
+        }
+        break;
+
+      case FacebookLoginStatus.cancelledByUser:
+        print("Facebook ile giriş iptal edildi");
+        break;
+      case FacebookLoginStatus.error:
+        print("Facebook ile giriş hatası");
+        break;
+    }
+    return null;
   }
 }

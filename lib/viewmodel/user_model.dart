@@ -82,5 +82,20 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  @override
+  Future<AppUser> signInWithFacebook() async {
+    try {
+      state = ViewState.Busy;
+      _user = await _userRepository.signInWithFacebook();
+      return _user;
+    } catch (e) {
+      debugPrint(
+          "UserModel View modeldeki signInWithFacebook hatası ${e.toString()}");
+      return null;
+    } finally {
+      state = ViewState.Idle;
+    }
+  }
+
 //
 }
