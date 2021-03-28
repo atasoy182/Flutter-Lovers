@@ -12,6 +12,13 @@ class SignInPage extends StatelessWidget {
     print("Oturum açan user id : " + _user.userID.toString());
   }
 
+  void _gmailIleGirisYap(BuildContext context) async {
+    final _userModel = Provider.of<UserModel>(context, listen: false);
+    AppUser _user = await _userModel.signInWithGmail();
+    if (_user != null)
+      print("Oturum açan user id : " + _user.userID.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +47,7 @@ class SignInPage extends StatelessWidget {
               textColor: Colors.black87,
               buttonColor: Colors.white,
               buttonIcon: Image.asset("images/google-logo.png"),
-              onPressed: () {},
+              onPressed: () => _gmailIleGirisYap(context),
             ),
             SocialLoginButton(
               buttonText: "Facebook ile giriş yap",

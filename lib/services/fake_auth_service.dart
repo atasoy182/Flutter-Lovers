@@ -19,4 +19,10 @@ class FakeAuthService implements AuthBase {
   Future<bool> signOut() async {
     return Future.value(true);
   }
+
+  @override
+  Future<AppUser> signInWithGmail() {
+    // TODO: implement signInWithGmail
+    throw UnimplementedError();
+  }
 }

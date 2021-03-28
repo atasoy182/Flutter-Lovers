@@ -67,5 +67,20 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  @override
+  Future<AppUser> signInWithGmail() async {
+    try {
+      state = ViewState.Busy;
+      _user = await _userRepository.signInWithGmail();
+      return _user;
+    } catch (e) {
+      debugPrint(
+          "UserModel View modeldeki signInWithGmail hatası ${e.toString()}");
+      return null;
+    } finally {
+      state = ViewState.Idle;
+    }
+  }
+
 //
 }
