@@ -50,65 +50,77 @@ class _EmailveSifreLoginPageState extends State<EmailveSifreLoginPage> {
     _linkText = _formType == FormType.LogIn
         ? "Hesabınız yok mu ? Kayıt Olun"
         : "Hesabınız var mı ? Giriş Yapın";
+    final _userModel = Provider.of<UserModel>(context);
+
+    if (_userModel.user != null) {
+      Future.delayed(Duration(microseconds: 10), () {
+        Navigator.of(context).pop();
+      });
+    }
 
     return Scaffold(
         appBar: AppBar(
           title: Text("Giriş / Kayıt"),
         ),
         body: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email_outlined),
-                        hintText: "E mail",
-                        labelText: "E mail",
-                        border: OutlineInputBorder(),
+          child: _userModel.state == ViewState.Idle
+              ? SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            keyboardType: TextInputType.emailAddress,
+                            initialValue: "james@metallica.com",
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.email_outlined),
+                              hintText: "E mail",
+                              labelText: "E mail",
+                              border: OutlineInputBorder(),
+                            ),
+                            onSaved: (String girilenEmail) {
+                              _email = girilenEmail;
+                            },
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                            obscureText: true,
+                            initialValue: "123456",
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.email_outlined),
+                              hintText: "Şifre",
+                              labelText: "Şifre",
+                              border: OutlineInputBorder(),
+                            ),
+                            onSaved: (String girilenSifre) {
+                              _sifre = girilenSifre;
+                            },
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          SocialLoginButton(
+                            buttonText: _buttonText,
+                            onPressed: () => _formSubmit(),
+                            buttonColor: Theme.of(context).primaryColor,
+                            radius: 10,
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          FlatButton(
+                              onPressed: () => _degistir(),
+                              child: Text(_linkText))
+                        ],
                       ),
-                      onSaved: (String girilenEmail) {
-                        _email = girilenEmail;
-                      },
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TextFormField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email_outlined),
-                        hintText: "Şifre",
-                        labelText: "Şifre",
-                        border: OutlineInputBorder(),
-                      ),
-                      onSaved: (String girilenSifre) {
-                        _sifre = girilenSifre;
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    SocialLoginButton(
-                      buttonText: _buttonText,
-                      onPressed: () => _formSubmit(),
-                      buttonColor: Theme.of(context).primaryColor,
-                      radius: 10,
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    FlatButton(
-                        onPressed: () => _degistir(), child: Text(_linkText))
-                  ],
-                ),
-              ),
-            ),
-          ),
+                  ),
+                )
+              : CircularProgressIndicator(),
         ));
   }
 }
