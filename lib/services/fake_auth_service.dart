@@ -31,4 +31,17 @@ class FakeAuthService implements AuthBase {
     // TODO: implement signInWithFacebook
     throw UnimplementedError();
   }
+
+  @override
+  Future<AppUser> createUserWithEmailAndPassword(
+      String email, String password) {
+    // TODO: implement createUserWithEmailAndPassword
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<AppUser> signInEmailAndPassword(String email, String password) {
+    // TODO: implement signInEmailAndPassword
+    throw UnimplementedError();
+  }
 }

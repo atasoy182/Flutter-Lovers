@@ -6,4 +6,6 @@ abstract class AuthBase {
   Future<bool> signOut();
   Future<AppUser> signInWithGmail();
   Future<AppUser> signInWithFacebook();
+  Future<AppUser> signInEmailAndPassword(String email, String password);
+  Future<AppUser> createUserWithEmailAndPassword(String email, String password);
 }

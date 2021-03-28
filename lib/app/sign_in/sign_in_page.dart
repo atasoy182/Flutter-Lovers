@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lovers/app/sign_in/email_sifre_giris_ve_kayit.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
-import 'common_widgets/social_login_button.dart';
+import '../../common_widgets/social_login_button.dart';
 
 class SignInPage extends StatelessWidget {
   void _misafirGirisi(BuildContext context) async {
@@ -24,6 +25,14 @@ class SignInPage extends StatelessWidget {
     AppUser _user = await _userModel.signInWithFacebook();
     if (_user != null)
       print("Oturum açan user id : " + _user.userID.toString());
+  }
+
+  void _emailIleGirisYap(BuildContext context) async {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          fullscreenDialog: true,
+          builder: (context) => EmailveSifreLoginPage()),
+    );
   }
 
   @override
@@ -70,7 +79,7 @@ class SignInPage extends StatelessWidget {
                 size: 32,
                 color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: () => _emailIleGirisYap(context),
             ),
             SocialLoginButton(
               buttonText: "Misafir Girişi",
