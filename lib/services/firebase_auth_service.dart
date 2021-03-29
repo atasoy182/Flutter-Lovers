@@ -50,7 +50,7 @@ class FirebaseAuthService implements AuthBase {
     if (user == null) {
       return null;
     } else {
-      return AppUser(userID: user.uid);
+      return AppUser(userID: user.uid, email: user.email);
     }
   }
 
@@ -77,6 +77,7 @@ class FirebaseAuthService implements AuthBase {
       }
     } catch (e) {
       print("Gmail oturum açma hatası " + e.toString());
+      return null;
     }
   }
 
