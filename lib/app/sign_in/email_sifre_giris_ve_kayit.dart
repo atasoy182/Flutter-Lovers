@@ -78,6 +78,9 @@ class _EmailveSifreLoginPageState extends State<EmailveSifreLoginPage> {
                               prefixIcon: Icon(Icons.email_outlined),
                               hintText: "E mail",
                               labelText: "E mail",
+                              errorText: _userModel.mailHataMesaji != null
+                                  ? _userModel.mailHataMesaji
+                                  : null,
                               border: OutlineInputBorder(),
                             ),
                             onSaved: (String girilenEmail) {
@@ -94,6 +97,9 @@ class _EmailveSifreLoginPageState extends State<EmailveSifreLoginPage> {
                               prefixIcon: Icon(Icons.email_outlined),
                               hintText: "Şifre",
                               labelText: "Şifre",
+                              errorText: _userModel.sifreHataMesaji != null
+                                  ? _userModel.sifreHataMesaji
+                                  : null,
                               border: OutlineInputBorder(),
                             ),
                             onSaved: (String girilenSifre) {

@@ -10,6 +10,8 @@ class UserModel with ChangeNotifier implements AuthBase {
   ViewState _state = ViewState.Idle;
   UserRepository _userRepository = locator.get<UserRepository>();
   AppUser _user;
+  String sifreHataMesaji;
+  String mailHataMesaji;
 
   ViewState get state => _state;
 
@@ -101,10 +103,13 @@ class UserModel with ChangeNotifier implements AuthBase {
   Future<AppUser> createUserWithEmailAndPassword(
       String email, String password) async {
     try {
-      state = ViewState.Busy;
-      _user =
-          await _userRepository.createUserWithEmailAndPassword(email, password);
-      return _user;
+      if (_emailSifreKontrol(email, password)) {
+        state = ViewState.Busy;
+        _user = await _userRepository.createUserWithEmailAndPassword(
+            email, password);
+        return _user;
+      } else
+        return null;
     } catch (e) {
       debugPrint(
           "UserModel View modeldeki createUserWithEmailAndPassword hatası ${e.toString()}");
@@ -117,9 +122,12 @@ class UserModel with ChangeNotifier implements AuthBase {
   @override
   Future<AppUser> signInEmailAndPassword(String email, String password) async {
     try {
-      state = ViewState.Busy;
-      _user = await _userRepository.signInEmailAndPassword(email, password);
-      return _user;
+      if (_emailSifreKontrol(email, password)) {
+        state = ViewState.Busy;
+        _user = await _userRepository.signInEmailAndPassword(email, password);
+        return _user;
+      } else
+        return null;
     } catch (e) {
       debugPrint(
           "UserModel View modeldeki signInEmailAndPassword hatası ${e.toString()}");
@@ -127,6 +135,24 @@ class UserModel with ChangeNotifier implements AuthBase {
     } finally {
       state = ViewState.Idle;
     }
+  }
+
+  bool _emailSifreKontrol(String email, String sifre) {
+    var result = true;
+
+    if (sifre.length < 6) {
+      sifreHataMesaji = "En az 6 karakter olmalı !";
+      result = false;
+    } else
+      sifreHataMesaji = null;
+
+    if (!email.contains("@")) {
+      mailHataMesaji = "Geçersiz e mail adresi !";
+      result = false;
+    } else
+      mailHataMesaji = null;
+
+    return result;
   }
 
 //

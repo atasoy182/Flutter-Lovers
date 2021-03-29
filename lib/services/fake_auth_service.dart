@@ -21,27 +21,27 @@ class FakeAuthService implements AuthBase {
   }
 
   @override
-  Future<AppUser> signInWithGmail() {
-    // TODO: implement signInWithGmail
-    throw UnimplementedError();
+  Future<AppUser> signInWithGmail() async {
+    return await Future.delayed(Duration(seconds: 2),
+        () => AppUser(userID: "sign_in_with_gmail_" + userID));
   }
 
   @override
-  Future<AppUser> signInWithFacebook() {
-    // TODO: implement signInWithFacebook
-    throw UnimplementedError();
+  Future<AppUser> signInWithFacebook() async {
+    return await Future.delayed(Duration(seconds: 2),
+        () => AppUser(userID: "sign_in_with_facebook_" + userID));
   }
 
   @override
   Future<AppUser> createUserWithEmailAndPassword(
-      String email, String password) {
-    // TODO: implement createUserWithEmailAndPassword
-    throw UnimplementedError();
+      String email, String password) async {
+    return await Future.delayed(Duration(seconds: 2),
+        () => AppUser(userID: "createUserWithEmailAndPassword_" + userID));
   }
 
   @override
-  Future<AppUser> signInEmailAndPassword(String email, String password) {
-    // TODO: implement signInEmailAndPassword
-    throw UnimplementedError();
+  Future<AppUser> signInEmailAndPassword(String email, String password) async {
+    return await Future.delayed(Duration(seconds: 2),
+        () => AppUser(userID: "signInEmailAndPassword_" + userID));
   }
 }
