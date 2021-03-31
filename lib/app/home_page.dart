@@ -3,8 +3,6 @@ import 'package:flutter_lovers/app/kullanicilar_page.dart';
 import 'package:flutter_lovers/app/my_custom_bottom_navi.dart';
 import 'package:flutter_lovers/app/profil_page.dart';
 import 'package:flutter_lovers/app/tab_items.dart';
-import 'package:flutter_lovers/viewmodel/user_model.dart';
-import 'package:provider/provider.dart';
 
 import '../model/app_user_model.dart';
 
@@ -19,6 +17,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TabItem _currentTab = TabItem.Kullanicilar;
+
+  Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
+    TabItem.Kullanicilar: GlobalKey<NavigatorState>(),
+    TabItem.Profil: GlobalKey<NavigatorState>(),
+  };
+
   Map<TabItem, Widget> tumSayfalar() {
     return {
       TabItem.Kullanicilar: KullanicilarPage(),
@@ -28,23 +32,25 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return WillPopScope(
+      onWillPop: () async =>
+          !await navigatorKeys[_currentTab].currentState.maybePop(),
       child: MyCustomBottomNavigation(
         currentTab: _currentTab,
+        navigatorKeys: navigatorKeys,
         onSelectedTab: (secilenTab) {
-          setState(() {
-            _currentTab = secilenTab;
-          });
+          if (secilenTab == _currentTab) {
+            navigatorKeys[secilenTab]
+                .currentState
+                .popUntil((route) => route.isFirst);
+          } else {
+            setState(() {
+              _currentTab = secilenTab;
+            });
+          }
         },
         sayfaOlusturucu: tumSayfalar(),
       ),
     );
   }
 }
-/*
-   Future<void> _cikisYap(BuildContext context) async {
-    final _userModel = Provider.of<UserModel>(context, listen: false);
-    bool result = await _userModel.signOut();
-    return result;
-  }
- */
