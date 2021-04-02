@@ -50,7 +50,7 @@ class UserRepository implements AuthBase {
       bool _result = await _fireStoreDBService.saveUser(_appuser);
 
       if (_result) {
-        return _appuser;
+        return await _fireStoreDBService.readUser(_appuser.userID);
       } else
         return null;
     }
@@ -65,7 +65,7 @@ class UserRepository implements AuthBase {
       bool _result = await _fireStoreDBService.saveUser(_appuser);
 
       if (_result) {
-        return _appuser;
+        return await _fireStoreDBService.readUser(_appuser.userID);
       } else
         return null;
     }
@@ -84,7 +84,7 @@ class UserRepository implements AuthBase {
       bool _result = await _fireStoreDBService.saveUser(_appuser);
 
       if (_result) {
-        return _appuser;
+        return await _fireStoreDBService.readUser(_appuser.userID);
       } else
         return null;
     }
@@ -95,7 +95,9 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return await _fakeAuthService.signInEmailAndPassword(email, password);
     } else {
-      return await _firebaseAuthService.signInEmailAndPassword(email, password);
+      AppUser _user =
+          await _firebaseAuthService.signInEmailAndPassword(email, password);
+      return await _fireStoreDBService.readUser(_user.userID);
     }
   }
 }

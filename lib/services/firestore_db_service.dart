@@ -20,4 +20,15 @@ class FireStoreDBService implements DBBase {
 
     return true;
   }
+
+  @override
+  Future<AppUser> readUser(String UserID) async {
+    DocumentSnapshot _okunanUser =
+        await _firestore.collection("users").doc(UserID).get();
+    Map<String, dynamic> _okunanUserBilgileri = _okunanUser.data();
+
+    AppUser _okunanUserNesnesi = AppUser.fromMap(_okunanUserBilgileri);
+    print("Okunan User Nesnesi : " + _okunanUserNesnesi.toString());
+    return _okunanUserNesnesi;
+  }
 }

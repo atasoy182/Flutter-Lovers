@@ -7,11 +7,11 @@ import 'package:provider/provider.dart';
 import '../../common_widgets/social_login_button.dart';
 
 class SignInPage extends StatelessWidget {
-  void _misafirGirisi(BuildContext context) async {
-    final _userModel = Provider.of<UserModel>(context, listen: false);
-    AppUser _user = await _userModel.signInAnonymously();
-    print("Oturum açan user id : " + _user.userID.toString());
-  }
+//  void _misafirGirisi(BuildContext context) async {
+//    final _userModel = Provider.of<UserModel>(context, listen: false);
+//    AppUser _user = await _userModel.signInAnonymously();
+//    print("Oturum açan user id : " + _user.userID.toString());
+//  }
 
   void _gmailIleGirisYap(BuildContext context) async {
     final _userModel = Provider.of<UserModel>(context, listen: false);
@@ -81,12 +81,12 @@ class SignInPage extends StatelessWidget {
               ),
               onPressed: () => _emailIleGirisYap(context),
             ),
-            SocialLoginButton(
-              buttonText: "Misafir Girişi",
-              onPressed: () => _misafirGirisi(context),
-              buttonColor: Colors.teal,
-              buttonIcon: Icon(Icons.supervised_user_circle),
-            ),
+//            SocialLoginButton(
+//              buttonText: "Misafir Girişi",
+//              onPressed: () => _misafirGirisi(context),
+//              buttonColor: Colors.teal,
+//              buttonIcon: Icon(Icons.supervised_user_circle),
+//            ),
           ],
         ),
       ),

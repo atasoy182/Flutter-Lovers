@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +18,9 @@ class AppUser {
     return {
       'userID': userID ?? '',
       'email': email ?? '',
+      'userName': email != null
+          ? email.substring(0, email.indexOf('@')) + _randomSayiUret()
+          : '',
       'profileURL': profileURL ??
           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVe0cFaZ9e5Hm9X-tdWRLSvoZqg2bjemBABA&usqp=CAU',
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
@@ -36,5 +41,10 @@ class AppUser {
   @override
   String toString() {
     return 'AppUser{userID: $userID, email: $email, userName: $userName, profileURL: $profileURL, createdAt: $createdAt, updatedAt: $updatedAt, seviye: $seviye}';
+  }
+
+  String _randomSayiUret() {
+    int rastgeleSayi = Random().nextInt(999999);
+    return rastgeleSayi.toString();
   }
 }
