@@ -111,14 +111,9 @@ class FirebaseAuthService implements AuthBase {
   @override
   Future<AppUser> createUserWithEmailAndPassword(
       String email, String password) async {
-    try {
-      UserCredential authResult = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
-      return _userFromFirebase(authResult.user);
-    } catch (e) {
-      print("createUserWithEmailAndPassword HATASI ${e.toString()}");
-      return null;
-    }
+    UserCredential authResult = await _firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password);
+    return _userFromFirebase(authResult.user);
   }
 
   @override

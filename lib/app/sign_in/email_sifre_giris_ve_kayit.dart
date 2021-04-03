@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/common_widgets/social_login_button.dart';
+import 'package:flutter_lovers/hatalar.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -25,15 +27,38 @@ class _EmailveSifreLoginPageState extends State<EmailveSifreLoginPage> {
     final _userModel = Provider.of<UserModel>(context, listen: false);
 
     if (_formType == FormType.LogIn) {
-      AppUser _girisYapanUser =
-          await _userModel.signInEmailAndPassword(_email, _sifre);
-      if (_girisYapanUser != null)
-        print("Giriş yapan user id : " + _girisYapanUser.userID.toString());
+      try {
+        AppUser _girisYapanUser =
+            await _userModel.signInEmailAndPassword(_email, _sifre);
+        if (_girisYapanUser != null)
+          print("Giriş yapan user id : " + _girisYapanUser.userID.toString());
+      } on FirebaseAuthException catch (e) {
+        print(
+            "---------------------- widget oturum acma hatasi:" + e.toString());
+      }
     } else {
-      AppUser _olusturulanUser =
-          await _userModel.createUserWithEmailAndPassword(_email, _sifre);
-      if (_olusturulanUser != null)
-        print("Giriş yapan user id : " + _olusturulanUser.userID.toString());
+      try {
+        AppUser _olusturulanUser =
+            await _userModel.createUserWithEmailAndPassword(_email, _sifre);
+        if (_olusturulanUser != null)
+          print("Giriş yapan user id : " + _olusturulanUser.userID.toString());
+      } on FirebaseAuthException catch (e) {
+        print("---------------------- widget giris yapma hatasi:" +
+            Hatalar.goster(e.code.toString()));
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Hata"),
+                content: Text(Hatalar.goster(e.code.toString())),
+                actions: [
+                  FlatButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("Ok"))
+                ],
+              );
+            });
+      }
     }
   }
 
