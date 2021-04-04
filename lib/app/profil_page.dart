@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lovers/common_widgets/platform_duyarli_alert_dialog.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,7 @@ class ProfilPage extends StatelessWidget {
         ),
         actions: [
           FlatButton(
-              onPressed: () => _cikisYap(context),
+              onPressed: () => _cikisOnayiIste(context),
               child: Text(
                 "Çıkış Yap",
                 style: TextStyle(color: Colors.white, fontSize: 16),
@@ -29,5 +30,18 @@ class ProfilPage extends StatelessWidget {
     final _userModel = Provider.of<UserModel>(context, listen: false);
     bool result = await _userModel.signOut();
     return result;
+  }
+
+  Future _cikisOnayiIste(BuildContext context) async {
+    final sonuc = await PlatformDuyarliAlertDialog(
+      baslik: "Emin misiniz ?",
+      icerik: "Çıkmak istediğinizden emin misiniz ?",
+      anaButtonYazisi: "Evet",
+      iptalButtonYazisi: "Vazgeç",
+    ).goster(context);
+
+    if (sonuc == true) {
+      _cikisYap(context);
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_lovers/common_widgets/platform_duyarli_alert_dialog.dart';
 import 'package:flutter_lovers/common_widgets/social_login_button.dart';
 import 'package:flutter_lovers/hatalar.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
@@ -43,21 +44,11 @@ class _EmailveSifreLoginPageState extends State<EmailveSifreLoginPage> {
         if (_olusturulanUser != null)
           print("Giriş yapan user id : " + _olusturulanUser.userID.toString());
       } on FirebaseAuthException catch (e) {
-        print("---------------------- widget giris yapma hatasi:" +
-            Hatalar.goster(e.code.toString()));
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text("Hata"),
-                content: Text(Hatalar.goster(e.code.toString())),
-                actions: [
-                  FlatButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text("Ok"))
-                ],
-              );
-            });
+        PlatformDuyarliAlertDialog(
+          baslik: "Hata !",
+          icerik: Hatalar.goster(e.code.toString()),
+          anaButtonYazisi: "Ok",
+        ).goster(context);
       }
     }
   }
