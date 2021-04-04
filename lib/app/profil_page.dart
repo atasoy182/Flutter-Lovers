@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/common_widgets/platform_duyarli_alert_dialog.dart';
 import 'package:flutter_lovers/common_widgets/social_login_button.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProfilPage extends StatefulWidget {
@@ -11,6 +14,8 @@ class ProfilPage extends StatefulWidget {
 
 class _ProfilPageState extends State<ProfilPage> {
   TextEditingController _controllerUserName;
+  File _yeniImage;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -54,10 +59,41 @@ class _ProfilPageState extends State<ProfilPage> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: CircleAvatar(
-                radius: 75,
-                backgroundImage: NetworkImage(_userModel.user.profileURL),
-                backgroundColor: Colors.white,
+              child: GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          height: 160,
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.camera),
+                                title: Text("Kameradan Çek"),
+                                onTap: () {
+                                  _yeniFotoEkle(ImageSource.camera);
+                                },
+                              ),
+                              ListTile(
+                                leading: Icon(Icons.image),
+                                title: Text("Galeriden Seç"),
+                                onTap: () {
+                                  _yeniFotoEkle(ImageSource.gallery);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      });
+                },
+                child: CircleAvatar(
+                  radius: 75,
+                  backgroundImage: _yeniImage == null
+                      ? NetworkImage(_userModel.user.profileURL)
+                      : FileImage(_yeniImage),
+                  backgroundColor: Colors.white,
+                ),
               ),
             ),
             Padding(
@@ -114,10 +150,25 @@ class _ProfilPageState extends State<ProfilPage> {
     }
   }
 
-  void _userNameGuncelle(BuildContext context) {
+  void _userNameGuncelle(BuildContext context) async {
     final _userModel = Provider.of<UserModel>(context, listen: false);
     if (_userModel.user.userName != _controllerUserName.text) {
-      //_userModel.updateUserName()
+      var updateResult = await _userModel.updateUserName(
+          _userModel.user.userID, _controllerUserName.text);
+      if (updateResult) {
+        PlatformDuyarliAlertDialog(
+          baslik: "Başarılı",
+          icerik: "Username güncellendi",
+          anaButtonYazisi: "Ok",
+        ).goster(context);
+      } else {
+        _controllerUserName.text = _userModel.user.userName;
+        PlatformDuyarliAlertDialog(
+          baslik: "Hata",
+          icerik: "Username kullanılıyor, lütfen farklı bir username giriniz !",
+          anaButtonYazisi: "Ok",
+        ).goster(context);
+      }
     } else {
       PlatformDuyarliAlertDialog(
         baslik: "Hata",
@@ -125,5 +176,14 @@ class _ProfilPageState extends State<ProfilPage> {
         anaButtonYazisi: "Ok",
       ).goster(context);
     }
+  }
+
+  _yeniFotoEkle(ImageSource source) async {
+    PickedFile _pickedFoto = await _picker.getImage(source: source);
+
+    setState(() {
+      _yeniImage = File(_pickedFoto.path);
+      Navigator.of(context).pop();
+    });
   }
 }

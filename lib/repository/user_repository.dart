@@ -101,4 +101,12 @@ class UserRepository implements AuthBase {
       return await _fireStoreDBService.readUser(_user.userID);
     }
   }
+
+  Future<bool> updateUserName(String userID, String yeniUserName) async {
+    if (appMode == AppMode.DEBUG) {
+      return true;
+    } else {
+      return await _fireStoreDBService.updateUserName(userID, yeniUserName);
+    }
+  }
 }
