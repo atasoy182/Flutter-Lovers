@@ -22,7 +22,7 @@ class AppUser {
           ? email.substring(0, email.indexOf('@')) + _randomSayiUret()
           : '',
       'profileURL': profileURL ??
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVe0cFaZ9e5Hm9X-tdWRLSvoZqg2bjemBABA&usqp=CAU',
+          'https://w7.pngwing.com/pngs/116/612/png-transparent-joker-batman-two-face-art-joker-face-heroes-head.png',
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
       'updatedAt': updatedAt ?? FieldValue.serverTimestamp(),
       'seviye': seviye ?? 1,

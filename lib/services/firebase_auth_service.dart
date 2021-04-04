@@ -118,13 +118,12 @@ class FirebaseAuthService implements AuthBase {
 
   @override
   Future<AppUser> signInEmailAndPassword(String email, String password) async {
-    try {
-      UserCredential authResult = await _firebaseAuth
-          .signInWithEmailAndPassword(email: email, password: password);
-      return _userFromFirebase(authResult.user);
-    } catch (e) {
-      print("signInEmailAndPassword HATASI ${e.toString()}");
+    UserCredential authResult = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+    if (authResult.user == null) {
       return null;
+    } else {
+      return _userFromFirebase(authResult.user);
     }
   }
 }

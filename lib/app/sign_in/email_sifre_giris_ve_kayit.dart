@@ -34,8 +34,11 @@ class _EmailveSifreLoginPageState extends State<EmailveSifreLoginPage> {
         if (_girisYapanUser != null)
           print("Giriş yapan user id : " + _girisYapanUser.userID.toString());
       } on FirebaseAuthException catch (e) {
-        print(
-            "---------------------- widget oturum acma hatasi:" + e.toString());
+        PlatformDuyarliAlertDialog(
+          baslik: "Otum Açılırken Hata !",
+          icerik: Hatalar.goster(e.code.toString()),
+          anaButtonYazisi: "Ok",
+        ).goster(context);
       }
     } else {
       try {
