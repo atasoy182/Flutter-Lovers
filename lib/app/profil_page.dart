@@ -123,6 +123,7 @@ class _ProfilPageState extends State<ProfilPage> {
                   buttonText: "Değişiklikleri Kaydet",
                   onPressed: () {
                     _userNameGuncelle(context);
+                    _profilFotoGuncelle(context);
                   }),
             ),
           ],
@@ -169,21 +170,25 @@ class _ProfilPageState extends State<ProfilPage> {
           anaButtonYazisi: "Ok",
         ).goster(context);
       }
-    } else {
-      PlatformDuyarliAlertDialog(
-        baslik: "Hata",
-        icerik: "Değişiklik yapmadınız",
-        anaButtonYazisi: "Ok",
-      ).goster(context);
     }
   }
 
-  _yeniFotoEkle(ImageSource source) async {
+  void _yeniFotoEkle(ImageSource source) async {
     PickedFile _pickedFoto = await _picker.getImage(source: source);
 
     setState(() {
       _yeniImage = File(_pickedFoto.path);
       Navigator.of(context).pop();
     });
+  }
+
+  void _profilFotoGuncelle(BuildContext context) async {
+    final _userModel = Provider.of<UserModel>(context, listen: false);
+    if (_yeniImage != null) {
+      var url = await _userModel.uploadFile(
+          _userModel.user.userID, "profil_foto", _yeniImage);
+
+      print("gelen URL:" + url.toString());
+    }
   }
 }

@@ -48,4 +48,13 @@ class FireStoreDBService implements DBBase {
       return true;
     }
   }
+
+  @override
+  Future<bool> updateProfilFoto(String userID, String profilFotoUrl) async {
+    await _firestore
+        .collection("users")
+        .doc(userID)
+        .update({'profileURL': profilFotoUrl});
+    return true;
+  }
 }
