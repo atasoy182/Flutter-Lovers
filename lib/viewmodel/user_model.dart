@@ -164,5 +164,10 @@ class UserModel with ChangeNotifier implements AuthBase {
     return _indirmeLinki;
   }
 
+  Future<List<AppUser>> getAllUser() async{
+    var tumKullaniciListesi = await _userRepository.getAllUser();
+    return tumKullaniciListesi;
+  }
+
 //
 }

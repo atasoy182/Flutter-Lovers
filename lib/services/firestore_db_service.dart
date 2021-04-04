@@ -57,4 +57,13 @@ class FireStoreDBService implements DBBase {
         .update({'profileURL': profilFotoUrl});
     return true;
   }
+
+  @override
+  Future<List<AppUser>> getAllUser() async {
+    QuerySnapshot _querySnapshot = await _firestore.collection("users").get();
+    List<AppUser> tumKullanicilar;
+    tumKullanicilar =
+        _querySnapshot.docs.map((e) => AppUser.fromMap(e.data())).toList();
+    return tumKullanicilar;
+  }
 }
