@@ -1,4 +1,5 @@
 import 'package:flutter_lovers/model/app_user_model.dart';
+import 'package:flutter_lovers/model/mesaj_model.dart';
 
 abstract class DBBase {
   Future<bool> saveUser(AppUser appUser);
@@ -6,4 +7,5 @@ abstract class DBBase {
   Future<bool> updateUserName(String UserID, String yeniUserName);
   Future<bool> updateProfilFoto(String userID, String profilFotoUrl);
   Future<List<AppUser>> getAllUser();
+  Stream<List<Mesaj>> getMessages(String currentUserID, String konusulanUserID);
 }

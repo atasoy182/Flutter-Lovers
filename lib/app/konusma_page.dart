@@ -12,6 +12,7 @@ class KonusmaPage extends StatefulWidget {
 }
 
 class _KonusmaPageState extends State<KonusmaPage> {
+  var _messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,8 +22,46 @@ class _KonusmaPageState extends State<KonusmaPage> {
       body: Center(
         child: Column(
           children: [
-            Text(widget.currentUser.userName),
-            Text(widget.sohbetEdilenUser.userName)
+            Expanded(
+              child: ListView(
+                children: [Text("Konuşmanın kendisi")],
+              ),
+            ),
+            ////////
+            Container(
+              padding: EdgeInsets.only(bottom: 8, left: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      cursorColor: Colors.blueGrey,
+                      style: TextStyle(fontSize: 16.0, color: Colors.black),
+                      decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          hintText: "Mesajınızı Yazın",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide.none)),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 4),
+                    child: FloatingActionButton(
+                      elevation: 1,
+                      backgroundColor: Colors.blue,
+                      child: Icon(
+                        Icons.send,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {},
+                    ),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),

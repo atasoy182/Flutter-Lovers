@@ -1,5 +1,8 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
+import 'package:flutter_lovers/model/mesaj_model.dart';
 import 'package:flutter_lovers/services/database_base.dart';
 
 class FireStoreDBService implements DBBase {
@@ -65,5 +68,18 @@ class FireStoreDBService implements DBBase {
     tumKullanicilar =
         _querySnapshot.docs.map((e) => AppUser.fromMap(e.data())).toList();
     return tumKullanicilar;
+  }
+
+  @override
+  Stream<List<Mesaj>> getMessages(
+      String currentUserID, String konusulanUserID) {
+    var _querysnapshot = _firestore
+        .collection("konusmalar")
+        .doc(currentUserID + '--' + konusulanUserID)
+        .collection("mesajlar")
+        .orderBy("date")
+        .snapshots();
+    return _querysnapshot.map((mesajListesi) =>
+        mesajListesi.docs.map((mesaj) => Mesaj.fromMap(mesaj.data())).toList());
   }
 }
