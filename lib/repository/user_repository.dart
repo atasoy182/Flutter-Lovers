@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_lovers/locator.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
+import 'package:flutter_lovers/model/mesaj_model.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 import 'package:flutter_lovers/services/fake_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_auth_service.dart';
@@ -134,6 +135,23 @@ class UserRepository implements AuthBase {
       var tumKullanicilarListesi = await _fireStoreDBService.getAllUser();
 
       return tumKullanicilarListesi;
+    }
+  }
+
+  Stream<List<Mesaj>> getMessages(
+      String currentUserID, String sohbetEdilenUserId) {
+    if (appMode == AppMode.DEBUG) {
+      return Stream.empty();
+    } else {
+      return _fireStoreDBService.getMessages(currentUserID, sohbetEdilenUserId);
+    }
+  }
+
+  Future<bool> saveMessage(Mesaj kaydedilecekMesaj) async {
+    if (appMode == AppMode.DEBUG) {
+      return true;
+    } else {
+      return _fireStoreDBService.saveMessage(kaydedilecekMesaj);
     }
   }
 }

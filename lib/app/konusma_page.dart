@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
+import 'package:flutter_lovers/model/mesaj_model.dart';
+import 'package:flutter_lovers/viewmodel/user_model.dart';
+import 'package:provider/provider.dart';
 
 class KonusmaPage extends StatefulWidget {
   final AppUser currentUser;
@@ -13,8 +16,14 @@ class KonusmaPage extends StatefulWidget {
 
 class _KonusmaPageState extends State<KonusmaPage> {
   var _messageController = TextEditingController();
+  var _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
+    AppUser _currentUser = widget.currentUser;
+    AppUser _sohbetEdilenUser = widget.sohbetEdilenUser;
+
+    final _userModel = Provider.of<UserModel>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Sohbet"),
@@ -23,11 +32,26 @@ class _KonusmaPageState extends State<KonusmaPage> {
         child: Column(
           children: [
             Expanded(
-              child: ListView(
-                children: [Text("Konuşmanın kendisi")],
-              ),
-            ),
-            ////////
+                child: StreamBuilder<List<Mesaj>>(
+              stream: _userModel.getMessages(
+                  _currentUser.userID, _sohbetEdilenUser.userID),
+              builder: (context, streamMesajlarListesi) {
+                if (!streamMesajlarListesi.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                var tumMesajlar = streamMesajlarListesi.data;
+                return ListView.builder(
+                  reverse: true,
+                  controller: _scrollController,
+                  itemBuilder: (context, index) {
+                    return _konusmaBalonuOlustur(tumMesajlar[index]);
+                  },
+                  itemCount: tumMesajlar.length,
+                );
+              },
+            )),
             Container(
               padding: EdgeInsets.only(bottom: 8, left: 8),
               child: Row(
@@ -56,7 +80,24 @@ class _KonusmaPageState extends State<KonusmaPage> {
                         size: 30,
                         color: Colors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        if (_messageController.text.trim().length > 0) {
+                          Mesaj _kaydedilecekMesaj = Mesaj(
+                            kimden: _currentUser.userID,
+                            kime: _sohbetEdilenUser.userID,
+                            bendenMi: true,
+                            mesaj: _messageController.text,
+                          );
+                          var sonuc =
+                              await _userModel.saveMessage(_kaydedilecekMesaj);
+                          if (sonuc) {
+                            _messageController.clear();
+                            _scrollController.animateTo(0.0,
+                                duration: const Duration(milliseconds: 10),
+                                curve: Curves.easeOut);
+                          }
+                        }
+                      },
                     ),
                   )
                 ],
@@ -66,5 +107,59 @@ class _KonusmaPageState extends State<KonusmaPage> {
         ),
       ),
     );
+  }
+
+  Widget _konusmaBalonuOlustur(Mesaj satirdakiMesaj) {
+    Color _gelenMesajRenk = Colors.blue;
+    Color _gidenMesajRenk = Theme.of(context).primaryColor;
+
+    var _benimMesajimMi = satirdakiMesaj.bendenMi;
+
+    if (_benimMesajimMi) {
+      return Padding(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: _gidenMesajRenk),
+              child: Text(
+                satirdakiMesaj.mesaj,
+                style: TextStyle(color: Colors.white),
+              ),
+            )
+          ],
+        ),
+      );
+    } else {
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage:
+                      NetworkImage(widget.sohbetEdilenUser.profileURL),
+                ),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: _gelenMesajRenk),
+                  child: Text(satirdakiMesaj.mesaj),
+                )
+              ],
+            ),
+          )
+        ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+      );
+    }
   }
 }

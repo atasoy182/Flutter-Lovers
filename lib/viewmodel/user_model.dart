@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/locator.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
+import 'package:flutter_lovers/model/mesaj_model.dart';
 import 'package:flutter_lovers/repository/user_repository.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 
@@ -164,9 +165,18 @@ class UserModel with ChangeNotifier implements AuthBase {
     return _indirmeLinki;
   }
 
-  Future<List<AppUser>> getAllUser() async{
+  Future<List<AppUser>> getAllUser() async {
     var tumKullaniciListesi = await _userRepository.getAllUser();
     return tumKullaniciListesi;
+  }
+
+  Stream<List<Mesaj>> getMessages(
+      String currentUserID, String sohbetEdilenUserId) {
+    return _userRepository.getMessages(currentUserID, sohbetEdilenUserId);
+  }
+
+  Future<bool> saveMessage(Mesaj kaydedilecekMesaj) {
+    return _userRepository.saveMessage(kaydedilecekMesaj);
   }
 
 //

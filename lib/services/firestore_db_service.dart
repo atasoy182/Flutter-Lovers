@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/model/mesaj_model.dart';
@@ -77,9 +75,35 @@ class FireStoreDBService implements DBBase {
         .collection("konusmalar")
         .doc(currentUserID + '--' + konusulanUserID)
         .collection("mesajlar")
-        .orderBy("date")
+        .orderBy("date", descending: true)
         .snapshots();
     return _querysnapshot.map((mesajListesi) =>
         mesajListesi.docs.map((mesaj) => Mesaj.fromMap(mesaj.data())).toList());
+  }
+
+  Future<bool> saveMessage(Mesaj kaydedilecekMesaj) async {
+    var _messageID = _firestore.collection("konusmalar").doc().id;
+    var _documentID = kaydedilecekMesaj.kimden + "--" + kaydedilecekMesaj.kime;
+    var _receiverDocumentID =
+        kaydedilecekMesaj.kime + "--" + kaydedilecekMesaj.kimden;
+    var _kaydedilecekMesajYapisi = kaydedilecekMesaj.toMap();
+
+    await _firestore
+        .collection("konusmalar")
+        .doc(_documentID)
+        .collection("mesajlar")
+        .doc(_messageID)
+        .set(_kaydedilecekMesajYapisi);
+
+    _kaydedilecekMesajYapisi.update('bendenMi', (value) => false);
+
+    await _firestore
+        .collection("konusmalar")
+        .doc(_receiverDocumentID)
+        .collection("mesajlar")
+        .doc(_messageID)
+        .set(_kaydedilecekMesajYapisi);
+
+    return true;
   }
 }
