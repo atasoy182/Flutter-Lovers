@@ -1,8 +1,10 @@
+import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/model/mesaj_model.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class KonusmaPage extends StatefulWidget {
   final AppUser currentUser;
@@ -112,6 +114,13 @@ class _KonusmaPageState extends State<KonusmaPage> {
   Widget _konusmaBalonuOlustur(Mesaj satirdakiMesaj) {
     Color _gelenMesajRenk = Colors.blue;
     Color _gidenMesajRenk = Theme.of(context).primaryColor;
+    var _saatDakikaDegeri = "";
+
+    try {
+      _saatDakikaDegeri = _saatDakikaGoster(satirdakiMesaj.date);
+    } catch (e) {
+      print("HATA " + e.toString());
+    }
 
     var _benimMesajimMi = satirdakiMesaj.bendenMi;
 
@@ -121,16 +130,24 @@ class _KonusmaPageState extends State<KonusmaPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Container(
-              padding: EdgeInsets.all(10),
-              margin: EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: _gidenMesajRenk),
-              child: Text(
-                satirdakiMesaj.mesaj,
-                style: TextStyle(color: Colors.white),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    margin: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: _gidenMesajRenk),
+                    child: Text(
+                      satirdakiMesaj.mesaj,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+                Text(_saatDakikaDegeri),
+              ],
             )
           ],
         ),
@@ -146,14 +163,17 @@ class _KonusmaPageState extends State<KonusmaPage> {
                   backgroundImage:
                       NetworkImage(widget.sohbetEdilenUser.profileURL),
                 ),
-                Container(
-                  padding: EdgeInsets.all(10),
-                  margin: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: _gelenMesajRenk),
-                  child: Text(satirdakiMesaj.mesaj),
-                )
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    margin: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: _gelenMesajRenk),
+                    child: Text(satirdakiMesaj.mesaj),
+                  ),
+                ),
+                Text(_saatDakikaDegeri),
               ],
             ),
           )
@@ -161,5 +181,11 @@ class _KonusmaPageState extends State<KonusmaPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
       );
     }
+  }
+
+  String _saatDakikaGoster(Timestamp date) {
+    var _formatter = DateFormat.Hm();
+    var _formatlanmisTarih = _formatter.format(date.toDate());
+    return _formatlanmisTarih;
   }
 }
