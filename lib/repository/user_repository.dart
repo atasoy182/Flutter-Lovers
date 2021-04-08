@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_lovers/locator.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
+import 'package:flutter_lovers/model/konusma_model.dart';
 import 'package:flutter_lovers/model/mesaj_model.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 import 'package:flutter_lovers/services/fake_auth_service.dart';
@@ -19,6 +20,8 @@ class UserRepository implements AuthBase {
       locator.get<FirebaseStorageService>();
 
   AppMode appMode = AppMode.RELEASE;
+
+  List<AppUser> tumKullanicilarListesi = [];
 
   @override
   Future<AppUser> getCurrentUser() async {
@@ -132,8 +135,7 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return [];
     } else {
-      var tumKullanicilarListesi = await _fireStoreDBService.getAllUser();
-
+      tumKullanicilarListesi = await _fireStoreDBService.getAllUser();
       return tumKullanicilarListesi;
     }
   }
@@ -153,5 +155,48 @@ class UserRepository implements AuthBase {
     } else {
       return _fireStoreDBService.saveMessage(kaydedilecekMesaj);
     }
+  }
+
+  Future<List<Konusma>> getAllConversations(String userID) async {
+    if (appMode == AppMode.DEBUG) {
+      return [];
+    } else {
+      var konusmaListesi =
+          await _fireStoreDBService.getAllConversations(userID);
+
+      for (var satirdakiKonusma in konusmaListesi) {
+        var userListesindekiKullanici =
+            listedenBul(satirdakiKonusma.kimle_konusuyor);
+
+        if (userListesindekiKullanici != null) {
+          print("CACHEDEN GETIRILDI");
+          // Veriler cacheden geliyor
+          satirdakiKonusma.konusulanUserName =
+              userListesindekiKullanici.userName;
+          satirdakiKonusma.konusulanUserProfilURL =
+              userListesindekiKullanici.profileURL;
+        } else {
+          print("DATABASEDEN GETIRILDI");
+          // appuser getirilmemiş, readuser ile alalım.
+          var veritabanindanOkunanUser = await _fireStoreDBService
+              .readUser(satirdakiKonusma.kimle_konusuyor);
+          satirdakiKonusma.konusulanUserName =
+              veritabanindanOkunanUser.userName;
+          satirdakiKonusma.konusulanUserProfilURL =
+              veritabanindanOkunanUser.profileURL;
+        }
+      }
+      return konusmaListesi;
+    }
+  }
+
+  AppUser listedenBul(String userID) {
+    for (int i = 0; i < tumKullanicilarListesi.length; i++) {
+      if (tumKullanicilarListesi[i].userID == userID) {
+        // kullanıcı var app user nesnesini geri döndür.
+        return tumKullanicilarListesi[i];
+      }
+    }
+    return null;
   }
 }

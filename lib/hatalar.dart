@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Hatalar {
   static String goster(String hataKodu) {
     switch (hataKodu) {

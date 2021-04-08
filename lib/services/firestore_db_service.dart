@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
+import 'package:flutter_lovers/model/konusma_model.dart';
 import 'package:flutter_lovers/model/mesaj_model.dart';
 import 'package:flutter_lovers/services/database_base.dart';
 
@@ -69,6 +70,22 @@ class FireStoreDBService implements DBBase {
   }
 
   @override
+  Future<List<Konusma>> getAllConversations(String userID) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("konusmalar")
+        .where("konusma_sahibi", isEqualTo: userID)
+        .orderBy("olusturulma_tarihi", descending: true)
+        .get();
+    List<Konusma> tumKonusmalar = [];
+
+    for (DocumentSnapshot tekKonusma in querySnapshot.docs) {
+      tumKonusmalar.add(Konusma.fromMap(tekKonusma.data()));
+    }
+
+    return tumKonusmalar;
+  }
+
+  @override
   Stream<List<Mesaj>> getMessages(
       String currentUserID, String konusulanUserID) {
     var _querysnapshot = _firestore
@@ -95,6 +112,14 @@ class FireStoreDBService implements DBBase {
         .doc(_messageID)
         .set(_kaydedilecekMesajYapisi);
 
+    await _firestore.collection("konusmalar").doc(_documentID).set({
+      'konusma_sahibi': kaydedilecekMesaj.kimden,
+      'kimle_konusuyor': kaydedilecekMesaj.kime,
+      'son_yollanan_mesaj': kaydedilecekMesaj.mesaj,
+      'konusma_goruldu': false,
+      'olusturulma_tarihi': FieldValue.serverTimestamp(),
+    });
+
     _kaydedilecekMesajYapisi.update('bendenMi', (value) => false);
 
     await _firestore
@@ -103,6 +128,14 @@ class FireStoreDBService implements DBBase {
         .collection("mesajlar")
         .doc(_messageID)
         .set(_kaydedilecekMesajYapisi);
+
+    await _firestore.collection("konusmalar").doc(_receiverDocumentID).set({
+      'konusma_sahibi': kaydedilecekMesaj.kime,
+      'kimle_konusuyor': kaydedilecekMesaj.kimden,
+      'son_yollanan_mesaj': kaydedilecekMesaj.mesaj,
+      'konusma_goruldu': false,
+      'olusturulma_tarihi': FieldValue.serverTimestamp(),
+    });
 
     return true;
   }

@@ -90,10 +90,10 @@ class _KonusmaPageState extends State<KonusmaPage> {
                             bendenMi: true,
                             mesaj: _messageController.text,
                           );
+                          _messageController.clear();
                           var sonuc =
                               await _userModel.saveMessage(_kaydedilecekMesaj);
                           if (sonuc) {
-                            _messageController.clear();
                             _scrollController.animateTo(0.0,
                                 duration: const Duration(milliseconds: 10),
                                 curve: Curves.easeOut);
