@@ -35,37 +35,68 @@ class _KonusmalarimPageState extends State<KonusmalarimPage> {
             );
           } else {
             var tumKonusmalar = konusmaListesi.data;
-            return RefreshIndicator(
-              onRefresh: _konusmalarimiYenile,
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  var satirdakiKonusma = tumKonusmalar[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context, rootNavigator: true)
-                          .push(MaterialPageRoute(
-                              builder: (context) => KonusmaPage(
-                                    currentUser: _userModel.user,
-                                    sohbetEdilenUser: AppUser.IdveResim(
-                                        userID:
-                                            satirdakiKonusma.kimle_konusuyor,
-                                        profileURL: satirdakiKonusma
-                                            .konusulanUserProfilURL),
-                                  )));
-                    },
-                    child: ListTile(
-                      title: Text(satirdakiKonusma.son_yollanan_mesaj),
-                      subtitle: Text(satirdakiKonusma.konusulanUserName),
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            satirdakiKonusma.konusulanUserProfilURL),
+            if (tumKonusmalar.length > 0) {
+              return RefreshIndicator(
+                onRefresh: _konusmalarimiYenile,
+                child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    var satirdakiKonusma = tumKonusmalar[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true)
+                            .push(MaterialPageRoute(
+                                builder: (context) => KonusmaPage(
+                                      currentUser: _userModel.user,
+                                      sohbetEdilenUser: AppUser.IdveResim(
+                                          userID:
+                                              satirdakiKonusma.kimle_konusuyor,
+                                          profileURL: satirdakiKonusma
+                                              .konusulanUserProfilURL),
+                                    )));
+                      },
+                      child: ListTile(
+                        title: Text(satirdakiKonusma.son_yollanan_mesaj),
+                        subtitle: Text(satirdakiKonusma.konusulanUserName +
+                            "  (" +
+                            satirdakiKonusma.aradakiFark.toString() +
+                            ")"),
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.grey.withAlpha(40),
+                          backgroundImage: NetworkImage(
+                              satirdakiKonusma.konusulanUserProfilURL),
+                        ),
+                      ),
+                    );
+                  },
+                  itemCount: tumKonusmalar.length,
+                ),
+              );
+            } else {
+              return RefreshIndicator(
+                onRefresh: _konusmalarimiYenile,
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.chat,
+                              color: Theme.of(context).primaryColor, size: 80),
+                          Text(
+                            "Henüz Konuşma Yapılmamış",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 36),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-                itemCount: tumKonusmalar.length,
-              ),
-            );
+                    height: MediaQuery.of(context).size.height - 150,
+                  ),
+                ),
+              );
+            }
           }
         },
       ),
@@ -86,8 +117,8 @@ class _KonusmalarimPageState extends State<KonusmalarimPage> {
 //  }
 
   Future<Null> _konusmalarimiYenile() async {
-    await Future.delayed(Duration(seconds: 1));
     setState(() {});
+    await Future.delayed(Duration(seconds: 1));
     return null;
   }
 }

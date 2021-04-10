@@ -9,6 +9,7 @@ import 'package:flutter_lovers/services/fake_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_storage_service.dart';
 import 'package:flutter_lovers/services/firestore_db_service.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 enum AppMode { DEBUG, RELEASE }
 
@@ -161,6 +162,8 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return [];
     } else {
+      DateTime _zaman = await _fireStoreDBService.saatiGoster(userID);
+
       var konusmaListesi =
           await _fireStoreDBService.getAllConversations(userID);
 
@@ -175,6 +178,14 @@ class UserRepository implements AuthBase {
               userListesindekiKullanici.userName;
           satirdakiKonusma.konusulanUserProfilURL =
               userListesindekiKullanici.profileURL;
+          satirdakiKonusma.sonOkunmaZamani = _zaman;
+
+          timeago.setLocaleMessages("tr", timeago.TrMessages());
+          var _duration =
+              _zaman.difference(satirdakiKonusma.olusturulma_tarihi.toDate());
+
+          satirdakiKonusma.aradakiFark =
+              timeago.format(_zaman.subtract(_duration), locale: "tr");
         } else {
           print("DATABASEDEN GETIRILDI");
           // appuser getirilmemiş, readuser ile alalım.
@@ -185,6 +196,8 @@ class UserRepository implements AuthBase {
           satirdakiKonusma.konusulanUserProfilURL =
               veritabanindanOkunanUser.profileURL;
         }
+
+        timeAgoHesapla(satirdakiKonusma, _zaman);
       }
       return konusmaListesi;
     }
@@ -198,5 +211,17 @@ class UserRepository implements AuthBase {
       }
     }
     return null;
+  }
+
+  void timeAgoHesapla(Konusma satirdakiKonusma, DateTime zaman) {
+    satirdakiKonusma.sonOkunmaZamani = zaman;
+
+    timeago.setLocaleMessages("tr", timeago.TrMessages());
+
+    var _duration =
+        zaman.difference(satirdakiKonusma.olusturulma_tarihi.toDate());
+
+    satirdakiKonusma.aradakiFark =
+        timeago.format(zaman.subtract(_duration), locale: "tr");
   }
 }

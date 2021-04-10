@@ -92,7 +92,7 @@ class _ProfilPageState extends State<ProfilPage> {
                   backgroundImage: _yeniImage == null
                       ? NetworkImage(_userModel.user.profileURL)
                       : FileImage(_yeniImage),
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.grey.withAlpha(40),
                 ),
               ),
             ),

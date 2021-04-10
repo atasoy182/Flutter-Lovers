@@ -47,6 +47,7 @@ class _KullanicilarPageState extends State<KullanicilarPage> {
                             title: Text(satirdakiUser.userName),
                             subtitle: Text(satirdakiUser.email),
                             leading: CircleAvatar(
+                              backgroundColor: Colors.grey.withAlpha(40),
                               backgroundImage:
                                   NetworkImage(satirdakiUser.profileURL),
                             ),
@@ -58,8 +59,28 @@ class _KullanicilarPageState extends State<KullanicilarPage> {
                     }),
               );
             } else {
-              return Center(
-                child: Text("Kayıtlı kullanıcı Yok"),
+              return RefreshIndicator(
+                onRefresh: _kullanicilariyenile,
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.supervised_user_circle,
+                              color: Theme.of(context).primaryColor, size: 80),
+                          Text(
+                            "Henüz Kullanıcı Yok",
+                            style: TextStyle(fontSize: 36),
+                          ),
+                        ],
+                      ),
+                    ),
+                    height: MediaQuery.of(context).size.height - 150,
+                  ),
+                ),
               );
             }
           } else {

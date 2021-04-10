@@ -160,6 +160,7 @@ class _KonusmaPageState extends State<KonusmaPage> {
             child: Row(
               children: [
                 CircleAvatar(
+                  backgroundColor: Colors.grey.withAlpha(40),
                   backgroundImage:
                       NetworkImage(widget.sohbetEdilenUser.profileURL),
                 ),
