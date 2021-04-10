@@ -29,6 +29,8 @@ class AppUser {
     };
   }
 
+  AppUser.IdveResim({@required this.userID, @required this.profileURL});
+
   AppUser.fromMap(Map<String, dynamic> map)
       : userID = map['userID'],
         email = map['email'],

@@ -5,7 +5,12 @@ import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
-class KullanicilarPage extends StatelessWidget {
+class KullanicilarPage extends StatefulWidget {
+  @override
+  _KullanicilarPageState createState() => _KullanicilarPageState();
+}
+
+class _KullanicilarPageState extends State<KullanicilarPage> {
   @override
   Widget build(BuildContext context) {
     final _userModel = Provider.of<UserModel>(context);
@@ -22,33 +27,36 @@ class KullanicilarPage extends StatelessWidget {
             var tumKullanicilar = sonuc.data;
 
             if (tumKullanicilar.length - 1 > 0) {
-              return ListView.builder(
-                  itemCount: tumKullanicilar.length,
-                  itemBuilder: (context, index) {
-                    var satirdakiUser = sonuc.data[index];
-                    if (satirdakiUser.userID != _userModel.user.userID) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.of(context, rootNavigator: true)
-                              .push(MaterialPageRoute(
-                                  builder: (context) => KonusmaPage(
-                                        currentUser: _userModel.user,
-                                        sohbetEdilenUser: satirdakiUser,
-                                      )));
-                        },
-                        child: ListTile(
-                          title: Text(satirdakiUser.userName),
-                          subtitle: Text(satirdakiUser.email),
-                          leading: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(satirdakiUser.profileURL),
+              return RefreshIndicator(
+                onRefresh: _kullanicilariyenile,
+                child: ListView.builder(
+                    itemCount: tumKullanicilar.length,
+                    itemBuilder: (context, index) {
+                      var satirdakiUser = sonuc.data[index];
+                      if (satirdakiUser.userID != _userModel.user.userID) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context, rootNavigator: true)
+                                .push(MaterialPageRoute(
+                                    builder: (context) => KonusmaPage(
+                                          currentUser: _userModel.user,
+                                          sohbetEdilenUser: satirdakiUser,
+                                        )));
+                          },
+                          child: ListTile(
+                            title: Text(satirdakiUser.userName),
+                            subtitle: Text(satirdakiUser.email),
+                            leading: CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(satirdakiUser.profileURL),
+                            ),
                           ),
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  });
+                        );
+                      } else {
+                        return Container();
+                      }
+                    }),
+              );
             } else {
               return Center(
                 child: Text("Kayıtlı kullanıcı Yok"),
@@ -60,5 +68,11 @@ class KullanicilarPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<Null> _kullanicilariyenile() async {
+    setState(() {});
+    Future.delayed(Duration(seconds: 1));
+    return null;
   }
 }

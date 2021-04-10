@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lovers/app/konusma_page.dart';
+import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/model/konusma_model.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -33,19 +35,36 @@ class _KonusmalarimPageState extends State<KonusmalarimPage> {
             );
           } else {
             var tumKonusmalar = konusmaListesi.data;
-            return ListView.builder(
-              itemBuilder: (context, index) {
-                var satirdakiKonusma = tumKonusmalar[index];
-                return ListTile(
-                  title: Text(satirdakiKonusma.son_yollanan_mesaj),
-                  subtitle: Text(satirdakiKonusma.konusulanUserName),
-                  leading: CircleAvatar(
-                    backgroundImage:
-                        NetworkImage(satirdakiKonusma.konusulanUserProfilURL),
-                  ),
-                );
-              },
-              itemCount: tumKonusmalar.length,
+            return RefreshIndicator(
+              onRefresh: _konusmalarimiYenile,
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  var satirdakiKonusma = tumKonusmalar[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context, rootNavigator: true)
+                          .push(MaterialPageRoute(
+                              builder: (context) => KonusmaPage(
+                                    currentUser: _userModel.user,
+                                    sohbetEdilenUser: AppUser.IdveResim(
+                                        userID:
+                                            satirdakiKonusma.kimle_konusuyor,
+                                        profileURL: satirdakiKonusma
+                                            .konusulanUserProfilURL),
+                                  )));
+                    },
+                    child: ListTile(
+                      title: Text(satirdakiKonusma.son_yollanan_mesaj),
+                      subtitle: Text(satirdakiKonusma.konusulanUserName),
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            satirdakiKonusma.konusulanUserProfilURL),
+                      ),
+                    ),
+                  );
+                },
+                itemCount: tumKonusmalar.length,
+              ),
             );
           }
         },
@@ -65,4 +84,10 @@ class _KonusmalarimPageState extends State<KonusmalarimPage> {
 //      print("KONUSMA: " + konusma.data().toString());
 //    }
 //  }
+
+  Future<Null> _konusmalarimiYenile() async {
+    await Future.delayed(Duration(seconds: 1));
+    setState(() {});
+    return null;
+  }
 }
