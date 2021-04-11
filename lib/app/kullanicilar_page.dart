@@ -31,13 +31,10 @@ class _KullanicilarPageState extends State<KullanicilarPage> {
     getAppUser();
 
     _scrollController.addListener(() {
-      if (_scrollController.position.atEdge) {
-        if (_scrollController.position.pixels == 0) {
-          // listenin başı
-        } else {
-          // listenin sonu
-          getAppUser();
-        }
+      if (_scrollController.offset >=
+              _scrollController.position.minScrollExtent &&
+          !_scrollController.position.outOfRange) {
+        getAppUser();
       }
     });
   }
