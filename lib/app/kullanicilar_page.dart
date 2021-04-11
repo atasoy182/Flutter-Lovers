@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_lovers/app/konusma_page.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
@@ -76,7 +74,7 @@ class _KullanicilarPageState extends State<KullanicilarPage> {
     List<AppUser> _users = await _userModel.getUserWithPagination(
         _enSonGetirilenUser, _getirilecekElemanSayisi);
 
-    if (_tumKullanicilar == null) {
+    if (_enSonGetirilenUser == null) {
       _tumKullanicilar = [];
       _tumKullanicilar.addAll(_users);
     } else {
@@ -95,18 +93,76 @@ class _KullanicilarPageState extends State<KullanicilarPage> {
   }
 
   _kullaniciListesiniOlustur() {
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        if (index == _tumKullanicilar.length) {
-          return _yeniElemanlarYukleniyor();
-        }
+    if (_tumKullanicilar.length > 1) {
+      return RefreshIndicator(
+        onRefresh: _kullaniciListesiRefresh,
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            if (index == _tumKullanicilar.length) {
+              return _yeniElemanlarYukleniyor();
+            }
 
-        return ListTile(
-          title: Text(_tumKullanicilar[index].userName),
-        );
+            return appUserListeElemaniOlustur(index);
+          },
+          itemCount: _tumKullanicilar.length + 1,
+          controller: _scrollController,
+        ),
+      );
+    } else {
+      return RefreshIndicator(
+        onRefresh: _kullaniciListesiRefresh,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Container(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(Icons.supervised_user_circle,
+                      color: Theme.of(context).primaryColor, size: 80),
+                  Text(
+                    "Henüz Kullanıcı Yok",
+                    style: TextStyle(fontSize: 36),
+                  ),
+                ],
+              ),
+            ),
+            height: MediaQuery.of(context).size.height - 150,
+          ),
+        ),
+      );
+    }
+
+    // wait
+  }
+
+  Widget appUserListeElemaniOlustur(int index) {
+    final _userModel = Provider.of<UserModel>(context, listen: false);
+    var satirdakiAppUser = _tumKullanicilar[index];
+
+    if (satirdakiAppUser.userID == _userModel.user.userID) {
+      return Container();
+    }
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+            builder: (context) => KonusmaPage(
+                  currentUser: _userModel.user,
+                  sohbetEdilenUser: satirdakiAppUser,
+                )));
       },
-      itemCount: _tumKullanicilar.length + 1,
-      controller: _scrollController,
+      child: Card(
+        child: ListTile(
+          title: Text(satirdakiAppUser.userName),
+          subtitle: Text(satirdakiAppUser.email),
+          leading: CircleAvatar(
+            backgroundColor: Colors.grey.withAlpha(40),
+            backgroundImage: NetworkImage(satirdakiAppUser.profileURL),
+          ),
+        ),
+      ),
     );
   }
 
@@ -120,5 +176,11 @@ class _KullanicilarPageState extends State<KullanicilarPage> {
         ),
       ),
     );
+  }
+
+  Future<Null> _kullaniciListesiRefresh() async {
+    _enSonGetirilenUser = null;
+    _hasMore = true;
+    getAppUser();
   }
 }
