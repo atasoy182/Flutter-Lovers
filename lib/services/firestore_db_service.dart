@@ -60,14 +60,14 @@ class FireStoreDBService implements DBBase {
     return true;
   }
 
-  @override
-  Future<List<AppUser>> getAllUser() async {
-    QuerySnapshot _querySnapshot = await _firestore.collection("users").get();
-    List<AppUser> tumKullanicilar;
-    tumKullanicilar =
-        _querySnapshot.docs.map((e) => AppUser.fromMap(e.data())).toList();
-    return tumKullanicilar;
-  }
+//  @override
+//  Future<List<AppUser>> getAllUser() async {
+//    QuerySnapshot _querySnapshot = await _firestore.collection("users").get();
+//    List<AppUser> tumKullanicilar;
+//    tumKullanicilar =
+//        _querySnapshot.docs.map((e) => AppUser.fromMap(e.data())).toList();
+//    return tumKullanicilar;
+//  }
 
   @override
   Future<List<Konusma>> getAllConversations(String userID) async {
@@ -151,5 +151,34 @@ class FireStoreDBService implements DBBase {
     Timestamp okunanTarih = okunanMap.data()['saat'];
 
     return okunanTarih.toDate();
+  }
+
+  @override
+  Future<List<AppUser>> getUserwithPagination(
+      AppUser enSonGetirilenUser, int getirilecekElemanSayisi) async {
+    QuerySnapshot _querySnapshot;
+    List<AppUser> _tumKullanicilar = [];
+
+    if (enSonGetirilenUser == null) {
+      _querySnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .orderBy("userName")
+          .limit(getirilecekElemanSayisi)
+          .get();
+    } else {
+      _querySnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .orderBy("userName")
+          .startAfter([enSonGetirilenUser.userName])
+          .limit(getirilecekElemanSayisi)
+          .get();
+    }
+
+    for (DocumentSnapshot snap in _querySnapshot.docs) {
+      AppUser _tekUser = AppUser.fromMap(snap.data());
+      _tumKullanicilar.add(_tekUser);
+    }
+
+    return _tumKullanicilar;
   }
 }
