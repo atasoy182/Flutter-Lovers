@@ -4,6 +4,8 @@ import 'package:flutter_lovers/app/kullanicilar_page.dart';
 import 'package:flutter_lovers/app/my_custom_bottom_navi.dart';
 import 'package:flutter_lovers/app/profil_page.dart';
 import 'package:flutter_lovers/app/tab_items.dart';
+import 'package:flutter_lovers/viewmodel/all_users_view_model.dart';
+import 'package:provider/provider.dart';
 
 import '../model/app_user_model.dart';
 
@@ -27,7 +29,10 @@ class _HomePageState extends State<HomePage> {
 
   Map<TabItem, Widget> tumSayfalar() {
     return {
-      TabItem.Kullanicilar: KullanicilarPage(),
+      TabItem.Kullanicilar: ChangeNotifierProvider(
+        create: (context) => AllUserViewModel(),
+        child: KullanicilarPage(),
+      ),
       TabItem.Konusmalarim: KonusmalarimPage(),
       TabItem.Profil: ProfilPage(),
     };

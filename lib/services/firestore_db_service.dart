@@ -172,6 +172,8 @@ class FireStoreDBService implements DBBase {
           .startAfter([enSonGetirilenUser.userName])
           .limit(getirilecekElemanSayisi)
           .get();
+
+      await Future.delayed(Duration(seconds: 1));
     }
 
     for (DocumentSnapshot snap in _querySnapshot.docs) {
