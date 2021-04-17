@@ -183,4 +183,41 @@ class FireStoreDBService implements DBBase {
 
     return _tumKullanicilar;
   }
+
+  Future<List<Mesaj>> getMessagesWithPagination(
+      String currentUserID,
+      String sohbetEdilenUserID,
+      Mesaj enSonGetirilenMesaj,
+      int getirilecekElemanSayisi) async {
+    QuerySnapshot _querySnapshot;
+    List<Mesaj> _tumMesajlar = [];
+
+    if (enSonGetirilenMesaj == null) {
+      _querySnapshot = await FirebaseFirestore.instance
+          .collection("konusmalar")
+          .doc(currentUserID + '--' + sohbetEdilenUserID)
+          .collection("mesajlar")
+          .orderBy("date", descending: true)
+          .limit(getirilecekElemanSayisi)
+          .get();
+    } else {
+      _querySnapshot = await FirebaseFirestore.instance
+          .collection("konusmalar")
+          .doc(currentUserID + '--' + sohbetEdilenUserID)
+          .collection("mesajlar")
+          .orderBy("date", descending: true)
+          .startAfter([enSonGetirilenMesaj.date])
+          .limit(getirilecekElemanSayisi)
+          .get();
+
+      await Future.delayed(Duration(seconds: 1));
+    }
+
+    for (DocumentSnapshot snap in _querySnapshot.docs) {
+      Mesaj _tekMesaj = Mesaj.fromMap(snap.data());
+      _tumMesajlar.add(_tekMesaj);
+    }
+
+    return _tumMesajlar;
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/app/konusma_page.dart';
 import 'package:flutter_lovers/viewmodel/all_users_view_model.dart';
+import 'package:flutter_lovers/viewmodel/chat_view_model.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -83,9 +84,11 @@ class _KullanicilarPageState extends State<KullanicilarPage> {
     return GestureDetector(
       onTap: () {
         Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
-            builder: (context) => KonusmaPage(
-                  currentUser: _userModel.user,
-                  sohbetEdilenUser: satirdakiAppUser,
+            builder: (context) => ChangeNotifierProvider(
+                  create: (context) => ChatViewModel(
+                      currentUser: _userModel.user,
+                      sohbetEdilenUser: satirdakiAppUser),
+                  child: KonusmaPage(),
                 )));
       },
       child: Card(
