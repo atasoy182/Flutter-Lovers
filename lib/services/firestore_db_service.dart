@@ -93,6 +93,7 @@ class FireStoreDBService implements DBBase {
         .doc(currentUserID + '--' + konusulanUserID)
         .collection("mesajlar")
         .orderBy("date", descending: true)
+        .limit(1)
         .snapshots();
     return _querysnapshot.map((mesajListesi) =>
         mesajListesi.docs.map((mesaj) => Mesaj.fromMap(mesaj.data())).toList());

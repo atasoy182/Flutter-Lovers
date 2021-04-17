@@ -22,7 +22,7 @@ class _KullanicilarPageState extends State<KullanicilarPage> {
 
     _scrollController.addListener(() {
       if (_scrollController.offset >=
-              _scrollController.position.minScrollExtent &&
+              _scrollController.position.maxScrollExtent &&
           !_scrollController.position.outOfRange) {
         dahaFazlaKullaniciGetir();
       }

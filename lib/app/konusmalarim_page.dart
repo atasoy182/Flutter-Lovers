@@ -46,12 +46,13 @@ class _KonusmalarimPageState extends State<KonusmalarimPage> {
                         Navigator.of(context, rootNavigator: true)
                             .push(MaterialPageRoute(
                                 builder: (context) => KonusmaPage(
+                                    /*
                                       currentUser: _userModel.user,
                                       sohbetEdilenUser: AppUser.IdveResim(
                                           userID:
                                               satirdakiKonusma.kimle_konusuyor,
                                           profileURL: satirdakiKonusma
-                                              .konusulanUserProfilURL),
+                                              .konusulanUserProfilURL),*/
                                     )));
                       },
                       child: ListTile(
