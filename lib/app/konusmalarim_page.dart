@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lovers/app/konusma_page.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/model/konusma_model.dart';
+import 'package:flutter_lovers/viewmodel/chat_view_model.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -43,17 +44,19 @@ class _KonusmalarimPageState extends State<KonusmalarimPage> {
                     var satirdakiKonusma = tumKonusmalar[index];
                     return GestureDetector(
                       onTap: () {
-                        Navigator.of(context, rootNavigator: true)
-                            .push(MaterialPageRoute(
-                                builder: (context) => KonusmaPage(
-                                    /*
-                                      currentUser: _userModel.user,
-                                      sohbetEdilenUser: AppUser.IdveResim(
-                                          userID:
-                                              satirdakiKonusma.kimle_konusuyor,
-                                          profileURL: satirdakiKonusma
-                                              .konusulanUserProfilURL),*/
-                                    )));
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (context) => ChangeNotifierProvider(
+                              create: (context) => ChatViewModel(
+                                  currentUser: _userModel.user,
+                                  sohbetEdilenUser: AppUser.IdveResim(
+                                      userID: satirdakiKonusma.kimle_konusuyor,
+                                      profileURL: satirdakiKonusma
+                                          .konusulanUserProfilURL)),
+                              child: KonusmaPage(),
+                            ),
+                          ),
+                        );
                       },
                       child: ListTile(
                         title: Text(satirdakiKonusma.son_yollanan_mesaj),

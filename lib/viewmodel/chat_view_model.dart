@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/locator.dart';
 import 'package:flutter_lovers/model/app_user_model.dart';
@@ -14,6 +16,7 @@ class ChatViewModel with ChangeNotifier {
   Mesaj _listeyeEklenenIlkMesaj;
   bool _hasMore = true;
   bool _yeniMesajDinle = false;
+  StreamSubscription _streamSubscription;
 
   UserRepository _userRepository = locator.get<UserRepository>();
 
@@ -36,6 +39,11 @@ class ChatViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  dispose() {
+    _streamSubscription.cancel();
+    super.dispose();
+  }
+
   void getMessageWithPagination(bool yeniMesajlarGetiriliyor) async {
     if (_tumMesajlar.length > 0) {
       _enSonGetirilenMesaj = _tumMesajlar.last;
@@ -52,7 +60,6 @@ class ChatViewModel with ChangeNotifier {
     _tumMesajlar.addAll(_getirilenMesajlar);
     if (_tumMesajlar.length > 0) {
       _listeyeEklenenIlkMesaj = _tumMesajlar.first;
-      print("Listeye eklenen ilk mesaj" + _listeyeEklenenIlkMesaj.toString());
     }
 
     state = ChatViewState.Loaded;
@@ -60,10 +67,6 @@ class ChatViewModel with ChangeNotifier {
     if (_getirilenMesajlar.length < sayfaBasinaGonderiSayisi) {
       _hasMore = false;
     }
-
-    _getirilenMesajlar.forEach((element) {
-      print("Gelen mesaj = > " + element.mesaj);
-    });
 
     if (!_yeniMesajDinle) {
       _yeniMesajDinle = true;
@@ -85,13 +88,9 @@ class ChatViewModel with ChangeNotifier {
   }
 
   void _yeniMesajListenerAta() {
-    print(" Yeni mesajlar için Mesajlar Atandı");
-    _userRepository
+    _streamSubscription = _userRepository
         .getMessages(currentUser.userID, sohbetEdilenUser.userID)
         .listen((anlikData) {
-      print("Listener tetiklendi Son getirilen veri : " +
-          anlikData[0].toString());
-
       if (anlikData.isNotEmpty) {
         if (anlikData[0].date != null) {
           if (_listeyeEklenenIlkMesaj == null) {
