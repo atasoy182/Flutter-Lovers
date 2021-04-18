@@ -17,7 +17,7 @@ public class Application extends FlutterApplication implements PluginRegistrantC
 
     @Override
     public void registerWith(PluginRegistry registry) {
-        FirebaseMessagingPlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
-
+        //FirebaseMessagingPlugin.registerWith(registry.registrarFor("io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin"));
+        FirebaseCloudMessagingPluginRegistrant.registerWith( registry);
     }
 }
