@@ -4,6 +4,7 @@ import 'package:flutter_lovers/app/kullanicilar_page.dart';
 import 'package:flutter_lovers/app/my_custom_bottom_navi.dart';
 import 'package:flutter_lovers/app/profil_page.dart';
 import 'package:flutter_lovers/app/tab_items.dart';
+import 'package:flutter_lovers/notification_handler.dart';
 import 'package:flutter_lovers/viewmodel/all_users_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +20,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    NotificationHandler().initializeFCMNotification(context);
+  }
+
   TabItem _currentTab = TabItem.Kullanicilar;
 
   Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
