@@ -1,7 +1,16 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_lovers/common_widgets/platform_duyarli_alert_dialog.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_lovers/app/konusma_page.dart';
+import 'package:flutter_lovers/model/app_user_model.dart';
+import 'package:flutter_lovers/viewmodel/chat_view_model.dart';
+import 'package:flutter_lovers/viewmodel/user_model.dart';
+import 'package:provider/provider.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -24,8 +33,11 @@ class NotificationHandler {
     return _singleton;
   }
   NotificationHandler._internal();
+  BuildContext myContext;
 
   initializeFCMNotification(BuildContext context) async {
+    myContext = context;
+
     var initializationSettingsAndroid =
         AndroidInitializationSettings('app_icon');
     var initializationSettingsIOS = IOSInitializationSettings(
@@ -35,7 +47,14 @@ class NotificationHandler {
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
 
-    _fcm.subscribeToTopic("spor");
+    //_fcm.subscribeToTopic("spor");
+
+    _fcm.onTokenRefresh.listen((newToken) async {
+      User _user = await FirebaseAuth.instance.currentUser;
+      await FirebaseFirestore.instance
+          .doc("tokens/" + _user.uid)
+          .set({"token": newToken});
+    });
 
     _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -53,9 +72,6 @@ class NotificationHandler {
   }
 
   static void showNotification(Map<String, dynamic> message) async {
-    print("??????????????????????????????? showa gelen message:" +
-        message.toString());
-
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         '12345', 'Yeni mesaj', 'your channel description',
         importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
@@ -64,15 +80,31 @@ class NotificationHandler {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, message['data']['title'],
         message['data']['message'], platformChannelSpecifics,
-        payload: 'Bildirim tıklanılınca aktarılan değer');
+        payload: jsonEncode(message));
   }
 
   Future onDidReceiveLocalNotification(
       int id, String title, String body, String payload) {}
 
-  Future onSelectNotification(String payload) {
+  Future onSelectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
+
+      final _userModel = Provider.of<UserModel>(myContext, listen: false);
+      Map<String, dynamic> gelenBildirim = await jsonDecode(payload);
+
+      Navigator.of(myContext, rootNavigator: true).push(
+        MaterialPageRoute(
+          builder: (context) => ChangeNotifierProvider(
+            create: (context) => ChatViewModel(
+                currentUser: _userModel.user,
+                sohbetEdilenUser: AppUser.IdveResim(
+                    userID: gelenBildirim['data']['gonderenUserID'],
+                    profileURL: gelenBildirim['data']['profilURL'])),
+            child: KonusmaPage(),
+          ),
+        ),
+      );
     }
   }
 }

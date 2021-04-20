@@ -5,6 +5,7 @@ import 'package:flutter_lovers/model/app_user_model.dart';
 import 'package:flutter_lovers/model/konusma_model.dart';
 import 'package:flutter_lovers/model/mesaj_model.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
+import 'package:flutter_lovers/services/bildirim_gonderme_servisi.dart';
 import 'package:flutter_lovers/services/fake_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_storage_service.dart';
@@ -19,10 +20,13 @@ class UserRepository implements AuthBase {
   FireStoreDBService _fireStoreDBService = locator.get<FireStoreDBService>();
   FirebaseStorageService _firebaseStorageService =
       locator.get<FirebaseStorageService>();
+  BildirimGondermeServis _bildirimGondermeServis =
+      locator.get<BildirimGondermeServis>();
 
   AppMode appMode = AppMode.RELEASE;
 
   List<AppUser> tumKullanicilarListesi = [];
+  Map<String, String> kullaniciToken = Map<String, String>();
 
   @override
   Future<AppUser> getCurrentUser() async {
@@ -150,11 +154,29 @@ class UserRepository implements AuthBase {
     }
   }
 
-  Future<bool> saveMessage(Mesaj kaydedilecekMesaj) async {
+  Future<bool> saveMessage(Mesaj kaydedilecekMesaj, AppUser currentUser) async {
     if (appMode == AppMode.DEBUG) {
       return true;
     } else {
-      return _fireStoreDBService.saveMessage(kaydedilecekMesaj);
+      bool dbYazmaIslemi =
+          await _fireStoreDBService.saveMessage(kaydedilecekMesaj);
+
+      if (dbYazmaIslemi) {
+        var token = "";
+        if (kullaniciToken.containsKey(kaydedilecekMesaj.kime)) {
+          token = kullaniciToken[kaydedilecekMesaj.kime];
+          print(" localden geldi");
+        } else {
+          token = await _fireStoreDBService.tokenGetir(kaydedilecekMesaj.kime);
+          kullaniciToken['kaydedilecekMesaj.kime'] = token;
+          print(" dbden geldi");
+        }
+        await _bildirimGondermeServis.bildirimGonder(
+            kaydedilecekMesaj, currentUser, token);
+
+        return true;
+      } else
+        return false;
     }
   }
 

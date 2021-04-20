@@ -110,7 +110,8 @@ class _KonusmaPageState extends State<KonusmaPage> {
                     mesaj: _messageController.text,
                   );
                   _messageController.clear();
-                  var sonuc = await _chatModel.saveMessage(_kaydedilecekMesaj);
+                  var sonuc = await _chatModel.saveMessage(
+                      _kaydedilecekMesaj, _chatModel.currentUser);
                   if (sonuc) {
                     _scrollController.animateTo(0.0,
                         duration: const Duration(milliseconds: 10),

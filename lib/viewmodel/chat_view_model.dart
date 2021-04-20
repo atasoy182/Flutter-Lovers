@@ -74,8 +74,8 @@ class ChatViewModel with ChangeNotifier {
     }
   }
 
-  Future<bool> saveMessage(Mesaj kaydedilecekMesaj) async {
-    return await _userRepository.saveMessage(kaydedilecekMesaj);
+  Future<bool> saveMessage(Mesaj kaydedilecekMesaj, AppUser currentUser) async {
+    return await _userRepository.saveMessage(kaydedilecekMesaj, currentUser);
   }
 
   void dahaFazlaMesajGetir() async {

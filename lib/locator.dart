@@ -1,4 +1,5 @@
 import 'package:flutter_lovers/repository/user_repository.dart';
+import 'package:flutter_lovers/services/bildirim_gonderme_servisi.dart';
 import 'package:flutter_lovers/services/fake_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_storage_service.dart';
@@ -13,4 +14,5 @@ void setupLocator() {
   locator.registerLazySingleton(() => UserRepository());
   locator.registerLazySingleton(() => FireStoreDBService());
   locator.registerLazySingleton(() => FirebaseStorageService());
+  locator.registerLazySingleton(() => BildirimGondermeServis());
 }

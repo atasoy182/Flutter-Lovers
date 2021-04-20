@@ -221,4 +221,16 @@ class FireStoreDBService implements DBBase {
 
     return _tumMesajlar;
   }
+
+  Future<String> tokenGetir(String kime) async {
+    DocumentSnapshot _token = await _firestore.doc("tokens/" + kime).get();
+
+    if (_token != null) {
+      print("HEDEF TOKEN = " + _token.data()['token']);
+
+      return _token.data()['token'];
+    } else {
+      return null;
+    }
+  }
 }
