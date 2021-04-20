@@ -1,16 +1,11 @@
-# flutter_lovers
+# Flutter Lovers
 
-Flutter apps
+Flutter sevenlerin anlık mesajlaşabileceği bir chat uygulaması :)
 
-## Getting Started
+<p>State Management => Provider </p>
+<p>Database => Firebase</p>
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<img src = "https://github.com/atasoy182/Flutter-Lovers/blob/main/gifs/1618896503588.gif" width = "250">
+<br>
+<img src = "https://github.com/atasoy182/Flutter-Lovers/blob/main/gifs/1618896503600.gif" width = "250">
